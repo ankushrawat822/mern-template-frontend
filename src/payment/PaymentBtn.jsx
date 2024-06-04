@@ -4,15 +4,21 @@ import axios from 'axios'
 import { Toaster, toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 
+import API_KEY from '../utils/_helper.js'
+
 const PaymentBtn = ({email}) => {
 
     const [amount, setamount] = useState(500)
 
     const navigate = useNavigate()
 
+    
+
     const handlePayment = async () =>{
+      console.log("payment")
+
       try {
-        const res = await fetch(`http://localhost:8080/api/order` , {
+        const res = await fetch(`${API_KEY}api/order` , {
           method : 'POST',
           headers : {
              'content-type' : 'application/json',  
@@ -42,7 +48,7 @@ const PaymentBtn = ({email}) => {
           console.log("response" , response)
 
           try{
-            const res = await axios.post("http://localhost:8080/api/verify", {
+            const res = await axios.post(`${API_KEY}api/verify`, {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
