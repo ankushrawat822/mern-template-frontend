@@ -19,6 +19,9 @@ const Login = () => {
 
     const [isLogInLoading , setIsLogInLoading] = useState(false)
 
+    const [isLogInGoogleLoading , setIsLogInGoogleLoading] = useState(false)
+
+
 
 
     const navigate = useNavigate()
@@ -26,7 +29,7 @@ const Login = () => {
 
     useEffect(() => {
       
-     if(location.state && location.state.fromSignUp){
+     if(location.state && location.state.isEmailVerificationSent){
         toast.info("Email verification is sent on your mail. Please verify and log in.")
 
      }
@@ -83,6 +86,7 @@ const Login = () => {
 
 
     const handleLoginWithGoogle = () => {
+      setIsLogInGoogleLoading(true)
         const auth = getAuth(app)
 
         const provider = new GoogleAuthProvider()
@@ -125,10 +129,11 @@ const Login = () => {
 
             }
 
-            
+            setIsLogInGoogleLoading(false)
             navigate('/dashboard')
         })
         .catch( err => {
+          setIsLogInGoogleLoading(false)
           toast.error("Log in failed, Try again later")
           console.log(err)
         }
@@ -178,7 +183,11 @@ const Login = () => {
                     />
                   </svg>
                 </div>
-                <span className="ml-4">Log in with Google</span>
+                <span className="ml-4">
+                {
+                  isLogInGoogleLoading ? <SyncLoader color="#fff" size={8} /> : "Log in with Google"
+         }
+                </span>
               </button>
              
             </div>
@@ -230,14 +239,14 @@ const Login = () => {
               <Link to="/signup"><p className='mt-0 cursor-pointer text-blue-700 custorm-text-color font-semibold'>Create a New Account ?</p></Link>
 
               <p className="mt-6 text-xs text-gray-600 text-center">
-                I agree to abide by templatana's
-                <a href="#" className="border-b border-gray-500 border-dotted">
+                I agree to abide by {" "}
+                <a href="https://merchant.razorpay.com/policy/OGIvXKXYd4U1Av/terms" target='_blank' className="border-b border-gray-500 border-dotted">
                   Terms of Service
-                </a>
-                and its
+                </a>{" "}
+                {/* and its
                 <a href="#" className="border-b border-gray-500 border-dotted">
                   Privacy Policy
-                </a>
+                </a> */}
               </p>
             </div>
           </div>

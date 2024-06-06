@@ -6,9 +6,13 @@ import { useNavigate } from 'react-router-dom'
 
 import API_KEY from '../utils/_helper.js'
 
+import SyncLoader from "react-spinners/SyncLoader";
+
 const PaymentBtn = ({email}) => {
 
     const [amount, setamount] = useState(500)
+
+    const [ isLoading , setIsLoading] = useState(false)
 
     const navigate = useNavigate()
 
@@ -16,6 +20,8 @@ const PaymentBtn = ({email}) => {
 
     const handlePayment = async () =>{
       console.log("payment")
+
+      setIsLoading(true)
 
       try {
         const res = await fetch(`${API_KEY}api/order` , {
@@ -30,8 +36,10 @@ const PaymentBtn = ({email}) => {
 
         const data = await res.json();
         console.log(data)
+        setIsLoading(false)
         handleVerifyPayment(data.data)
       } catch (error) {
+        setIsLoading(false)
           console.log(error)
       }
     }
@@ -87,7 +95,13 @@ const PaymentBtn = ({email}) => {
   return (
      <>
         <Toaster richColors  position="bottom-center" />
-         <Button onClick={handlePayment}>Pay</Button>
+         <Button onClick={handlePayment}> 
+
+         {
+           isLoading ? <SyncLoader color="#fff" size={8} /> : "Pay Now"
+         }
+
+         </Button>
      </>
   )
 }

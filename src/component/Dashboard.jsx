@@ -32,19 +32,7 @@ const Dashboard = () => {
   } , [])
 
    
-  useEffect(() => {
-
-    if(location.state && location.state.isNewUser){
-      toast.success( "Welcome to our website" , {position : "top-right"})
-      console.log( "new user" , location.state.isNewUser)
-
-
-    }
-
-    console.log("location" , location.state)
-
-    
-  }, [location.state])
+ 
   
 
 

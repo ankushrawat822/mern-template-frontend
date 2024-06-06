@@ -18,6 +18,10 @@ const SignUp = () => {
 
     const [isSignUpLoading , setIsSignUpLoading] = useState(false)
 
+    const [ isUserAlreadyExist , setIsUserAlreadyExist] = useState(null)
+
+    const [ isSignUpGoogleLoading , setIsSignUpGoogleLoading] = useState(false)
+
 
     const navigate = useNavigate()
 
@@ -40,7 +44,8 @@ const SignUp = () => {
             // toast.info("Email verification sent")
             console.log('email sent')
             setIsSignUpLoading(false)
-            navigate('/login' , {state : { fromSignUp : true }})
+            navigate('/login' , { state : { isEmailVerificationSent : true }} )
+
         })
         .catch( err => {
           console.log(err.message)
@@ -52,6 +57,7 @@ const SignUp = () => {
 
   const handleSignUpWithGoogle = () => {
     
+    setIsSignUpGoogleLoading(true)
       const auth = getAuth(app)
 
       const provider = new GoogleAuthProvider()
@@ -61,7 +67,19 @@ const SignUp = () => {
           console.log(res.user)
           console.log("the user is created")
 
-          if(res.user.metadata.createdAt === res.user.metadata.lastLoginAt){
+          try {
+
+            const checkUser = await axios.post(`${API_KEY}api/check-user`, { email : res.user.email})
+            console.log(checkUser.data)
+            setIsUserAlreadyExist(checkUser.data.user)
+            console.log(isUserAlreadyExist)
+
+
+          } catch (error) {
+             console.log(error)
+          }
+
+          if( !isUserAlreadyExist){
 
             console.log("the user is new and signed in with google")
             try {
@@ -76,10 +94,14 @@ const SignUp = () => {
 
           }
 
-
+          setIsSignUpGoogleLoading(false)
           navigate('/dashboard')
+
       })
-      .catch( err => console.log(err))
+      .catch( err => {
+        setIsSignUpGoogleLoading(false)
+        console.log(err)
+      })
 
   
   }
@@ -124,7 +146,11 @@ const SignUp = () => {
                     />
                   </svg>
                 </div>
-                <span className="ml-4">Sign Up with Google</span>
+                <span className="ml-4">
+                {
+                  isSignUpGoogleLoading ? <SyncLoader color="#fff" size={8} /> : "Sign Up with Google"
+         }
+                </span>
               </button>
               
             </div>
@@ -171,13 +197,13 @@ const SignUp = () => {
 
               <p className="mt-6 text-xs text-gray-600 text-center">
                 I agree to abide by {` `} 
-                <a href="#" className="border-b border-gray-500 border-dotted">
-                  Terms of Service
+                <a href="https://merchant.razorpay.com/policy/OGIvXKXYd4U1Av/terms" className="border-b border-gray-500 border-dotted">
+                  Terms of Service {" "}
                 </a>
-                and its {` `}
+                {/* and its {` `}
                 <a href="#" className="border-b border-gray-500 border-dotted">
                   Privacy Policy
-                </a>
+                </a> */}
               </p>
             </div>
           </div>
